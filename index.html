@@ -3,13 +3,13 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Sistema de Orçamentos</title>
+<title>Sistema de Orçamento</title>
 
 <style>
 
 body{
 font-family: Arial;
-background: #f4f6f9;
+background:#f4f6f9;
 display:flex;
 justify-content:center;
 margin-top:50px;
@@ -43,6 +43,7 @@ border:none;
 border-radius:5px;
 cursor:pointer;
 margin-right:5px;
+margin-top:5px;
 }
 
 .calcular{
@@ -60,10 +61,6 @@ margin-top:20px;
 padding-left:20px;
 }
 
-li{
-margin-bottom:5px;
-}
-
 </style>
 
 </head>
@@ -72,7 +69,7 @@ margin-bottom:5px;
 
 <div class="container">
 
-<h2>Calculadora de Orçamento</h2>
+<h2>Sistema de Orçamento</h2>
 
 <label>Produto</label>
 <input id="produto">
@@ -85,6 +82,8 @@ margin-bottom:5px;
 
 <button class="calcular" onclick="calcular()">Calcular</button>
 <button class="limpar" onclick="limpar()">Limpar</button>
+<button onclick="copiar()">Copiar</button>
+<button onclick="gerarPDF()">Gerar PDF</button>
 
 <h3 id="resultado"></h3>
 
@@ -92,13 +91,18 @@ margin-bottom:5px;
 
 <ul id="lista"></ul>
 
+<h3>Total geral: R$ <span id="totalGeral">0</span></h3>
+
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 
 let lista = document.getElementById("lista")
 
 carregar()
+atualizarTotal()
 
 function calcular(){
 
@@ -108,7 +112,9 @@ let quantidade = document.getElementById("quantidade").value
 
 let total = preco * quantidade
 
-let texto = produto + " - R$ " + total
+let data = new Date().toLocaleDateString()
+
+let texto = data + " | " + produto + " - R$ " + total
 
 document.getElementById("resultado").innerText = texto
 
@@ -118,6 +124,7 @@ item.innerText = texto
 lista.appendChild(item)
 
 salvar()
+atualizarTotal()
 
 }
 
@@ -139,6 +146,51 @@ localStorage.setItem("pedidos", lista.innerHTML)
 function carregar(){
 
 lista.innerHTML = localStorage.getItem("pedidos") || ""
+
+}
+
+function atualizarTotal(){
+
+let itens = document.querySelectorAll("#lista li")
+
+let soma = 0
+
+itens.forEach(function(item){
+
+let texto = item.innerText
+let valor = texto.split("R$ ")[1]
+
+soma += Number(valor)
+
+})
+
+document.getElementById("totalGeral").innerText = soma
+
+}
+
+function copiar(){
+
+let texto = document.getElementById("resultado").innerText
+
+navigator.clipboard.writeText(texto)
+
+alert("Orçamento copiado!")
+
+}
+
+function gerarPDF(){
+
+const { jsPDF } = window.jspdf;
+
+let doc = new jsPDF()
+
+let resultado = document.getElementById("resultado").innerText
+
+doc.text("Orçamento", 10, 10)
+
+doc.text(resultado, 10, 20)
+
+doc.save("orcamento.pdf")
 
 }
 
