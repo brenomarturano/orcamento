@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Orçamentos</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: #f4f6f9;
+display:flex;
+justify-content:center;
+margin-top:50px;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+width:350px;
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:8px;
+margin-top:5px;
+margin-bottom:15px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin-right:5px;
+}
+
+.calcular{
+background:#28a745;
+color:white;
+}
+
+.limpar{
+background:#dc3545;
+color:white;
+}
+
+ul{
+margin-top:20px;
+padding-left:20px;
+}
+
+li{
+margin-bottom:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Calculadora de Orçamento</h2>
+
+<label>Produto</label>
+<input id="produto">
+
+<label>Preço</label>
+<input id="preco" type="number">
+
+<label>Quantidade</label>
+<input id="quantidade" type="number">
+
+<button class="calcular" onclick="calcular()">Calcular</button>
+<button class="limpar" onclick="limpar()">Limpar</button>
+
+<h3 id="resultado"></h3>
+
+<h3>Histórico de pedidos</h3>
+
+<ul id="lista"></ul>
+
+</div>
+
+<script>
+
+let lista = document.getElementById("lista")
+
+carregar()
+
+function calcular(){
+
+let produto = document.getElementById("produto").value
+let preco = document.getElementById("preco").value
+let quantidade = document.getElementById("quantidade").value
+
+let total = preco * quantidade
+
+let texto = produto + " - R$ " + total
+
+document.getElementById("resultado").innerText = texto
+
+let item = document.createElement("li")
+item.innerText = texto
+
+lista.appendChild(item)
+
+salvar()
+
+}
+
+function limpar(){
+
+document.getElementById("produto").value = ""
+document.getElementById("preco").value = ""
+document.getElementById("quantidade").value = ""
+document.getElementById("resultado").innerText = ""
+
+}
+
+function salvar(){
+
+localStorage.setItem("pedidos", lista.innerHTML)
+
+}
+
+function carregar(){
+
+lista.innerHTML = localStorage.getItem("pedidos") || ""
+
+}
+
+</script>
+
+</body>
+</html>
